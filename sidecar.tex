@@ -1,0 +1,138 @@
+\documentclass[preprint]{aastex7}
+
+\usepackage{graphicx}
+\usepackage{xpace}
+
+\usepackage{xcolor}
+
+\newcommand{\tbd}{\color{red} TBD;\,}
+\newcommand{\code}[1]{\texttt{#1}}
+\graphicspath{{figures}}
+
+\begin{document}
+
+\title{
+}
+
+\author[0000-0001-7113-1233]{W.~M.~Wood-Vasey}
+\email{wmwv@pitt.edu}
+\affiliation{
+        Pittsburgh Particle Physics, Astrophysics, and Cosmology Center (PITT PACC).
+        Physics and Astronomy Department, University of Pittsburgh,
+        Pittsburgh, PA 15260, USA
+}
+
+\begin{abstract}
+We present \code{sidecar}, a software package to detect and identify supernova in data from the Nancy Grace Roman Space Telescope High-Latitude Time Domain Survey.
+\end{abstract}
+
+\section{Introduction}
+
+Nancy Grace Roman Space Telescope (Roman; \cite{Roman})
+High-Latitude Time Domain Survey (HLTDS; \cite{HLTDS})
+
+Brief introduction of planned cadence (\cite{HLTDS_cadence}) sufficient to get a sense of the number of images that will be available for templates and the scale requirements of the computation.
+
+Discussion of pre-observations to get templates.
+
+Connection to \code{phrosty} \cite{phrosty}.
+
+\section{Approach}
+
+Identify template with overlap.  The dither and rotation strategy means that this takes some thought and calculation to build a template across an image.  For single images, the is continuity in the array. See Section~\ref{sec:template} for more detail and discussion.
+
+
+DB of OpenUniverse images.  Currently using SPIN service at NERSC -- mention because this is generally available for people who want to do things with the OpenUniverse 2024 images.  Need to have an equivalent for real data.  Could be SOC, or something we build ourselves.
+
+\section{Challenges with Under-Sampled Data and Non-Isotropic PSFs}
+
+Cite/introduce some sampling theory.
+Cite IMCOM and Drizzle papers.
+Cite 2009 IPAC paper on coadds.
+Cite JWST subtraction papers.
+
+
+In practical terms, the PSF of the Roman WFI has significant power at under-sampled spatial frequencies that are undersampled (1/pix).
+
+The Roman WFI PSF is significantly non-isotropic, with fingers extending out from the PSF at very specific angles. 
+This means that rotations of the field with respect to the PSF
+make convolution between two images require significant de-convolution.
+
+\begin{figure}
+\caption{Models of the Roman WFI PSF.  Roman ImSim ; GalSim?
+Show spatial and fourier structure.  Mark regions that are well-sampled
+and those that aren't.
+}
+\end{figure}
+
+\section{Score Image}
+
+SFFT, Zogy.
+A score image is the equivalent to the optimal detection image.
+For a direct image, one cross-correlates with the PSF and identifies
+the peaks as detection.
+The same principle applies for a subtraction; but because the warping and convolution both resample, there is significant correlation in the pixels that is not captured in a variance plane (which is only the diagonal).
+The Score Image is the optimum detection image.
+
+Decorrelation kernel whitens the noise,
+but is generally done across an assumed constant sky background 
+and does not include the photon noise from sources.
+
+Could add terms to score-image calculation.  See Zogy Section 3.3.
+
+We do detection based on the Score Image.
+
+\section{Masking of Bright Stars}
+
+As we are only looking at detecting supernova, we can mask bright stars.
+Bright means S/N > 100 in an individual images.
+These are the stars that will have significant signal 
+in places such as the spikes in the PSFs.  These often lead to subtraction artifacts due to the inability to do the de-convolution.
+
+\section{Demonstration on OpenUniverse 2024}
+
+\begin{figure}
+\caption{}
+\label{fig:subtraction}
+\end{figure}
+
+\begin{figure}
+\caption{}
+\label{fig:bright_stars_subtraction}
+\end{figure}
+
+\begin{figure}
+\caption{}
+\label{fig:artifacts}
+\end{figure}
+
+\begin{figure}
+\label{fig:transients}
+\end{figure}
+
+\subsection{Efficiency}
+\subsection{Purity}
+\subsection{Creating Candidate List and Passing to Phrosty and Campari}
+
+\section{Demonstration on ASDF files}
+
+\section{Building Templates from Small Numbers of Under-Sampled Data]
+
+\section{Future Work}
+
+SFFT is fitting for a convolution kernel, but not using the full information available of the optical model of the Roman WFI PSF.
+
+PSF is chromatic.  Could think about color of detected sources vs. areas used to calculate the convolution kernel.  However, if (a) one considers the range of Type Ia Supernovae from 0.3 < z < 3.0 that spans a range of colors; (b) often the important and hard thing in subtraction is not detecting real things but rejecting artifacts -- so it's about getting subtractions with a kernel suitable for the 
+
+Template building.  Single-epoch vs. multiple.
+What is the minimum number of images to build a template?
+What is the trade-off between more images vs. fewer rotation angles.
+How many images will we have at the start of the HLTDS?
+
+\section{Conclusion}
+
+\bibliographystyle{aasjournalv7}
+\bibliography{sidecar.bib}
+
+
+\end{document}
